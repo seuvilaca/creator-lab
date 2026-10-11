@@ -44,6 +44,9 @@ export const ROTULOS={
 };
 // "story" e "example" aparecem em mais de uma dimensão; o rótulo vale para todas.
 
+// O que cada papel de trecho do roteiro significa (barra colorida da "Anatomia do roteiro").
+export const PAPEIS={hook:'Cria o motivo inicial para continuar assistindo',setup:'Dá o contexto necessário para entender a ideia principal',problem:'Aponta um obstáculo, erro, custo ou conflito',example:'Traz uma ilustração, história, prova ou caso concreto',advice:'Entrega a recomendação principal ou explica o que fazer',payoff:'Responde a pergunta da abertura ou entrega a conclusão',cta:'Pede para seguir, comentar, compartilhar, acessar ou comprar',other:'Transição ou trecho sem outro papel claro'};
+
 export const ESTADOS={ready:'pronta',scraping:'coletando',running:'processando',paused:'pausada',complete:'concluída',partial:'parcial',failed:'com falha',interrupted:'interrompida',rehearsal:'demonstração',transcribing:'transcrevendo',transcribed:'transcrito',classifying:'classificando',no_audio:'sem áudio',no_speech:'sem fala'};
 
 export const rotulo=s=>{const k=String(s??'unclear');return ROTULOS[k]||k.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase());};

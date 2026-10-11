@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decode Botwise · Manual de uso</title><link rel="icon" type="image/png" href="/favicon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+:root{--azul:#2438E8;--azul-700:#1C2CC0;--azul-50:#EEF1FF;--azul-100:#DCE3FF;--azul-200:#B9C6FF;--tinta:#0B1030;--texto:#2A2E45;--cinza:#5C6274;--cinza-400:#9CA3B8;--linha:#E4E7F0;--fundo:#F6F7FB;--fundo-2:#EEF0F6;--citrico:#DDF247;--sucesso:#1F9D61;--alerta:#DB8B1F;--erro:#E5484D;
+ --display:'Sora',system-ui,sans-serif;--texto-f:'Instrument Sans',system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--fundo);color:var(--texto);font:16px/1.65 var(--texto-f);-webkit-font-smoothing:antialiased}
+a{color:var(--azul);font-weight:600;text-decoration:none;border-bottom:1px solid var(--azul-200)}
+a:hover{border-bottom-color:var(--azul)}
+.topo{position:sticky;top:0;z-index:10;background:rgba(246,247,251,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--linha)}
+.topo-in{max-width:1180px;margin:auto;height:68px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.marca{display:flex;align-items:center;gap:10px;border:0}
+.marca img{height:30px;display:block}
+.marca span{font:700 18px var(--display);color:var(--azul);padding-left:10px;border-left:1px solid var(--linha)}
+.voltar{display:inline-flex;align-items:center;gap:8px;background:var(--azul);color:#fff;border:0;border-radius:999px;padding:9px 18px;font-size:14px;box-shadow:0 6px 24px rgba(36,56,232,.30)}
+.voltar:hover{background:var(--azul-700)}
+.grade{max-width:1180px;margin:auto;padding:0 24px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px}
+nav.indice{position:sticky;top:92px;align-self:start;padding:32px 0;font-size:14px}
+nav.indice p{font:600 11px var(--texto-f);letter-spacing:.12em;color:var(--cinza);margin:0 0 12px}
+nav.indice ol{list-style:none;margin:0;padding:0;counter-reset:i}
+nav.indice li{counter-increment:i;margin:2px 0}
+nav.indice a{display:block;border:0;color:var(--cinza);font-weight:500;padding:6px 10px;border-radius:10px}
+nav.indice a:before{content:counter(i,decimal-leading-zero) "  ";color:var(--cinza-400);font-weight:600}
+nav.indice a:hover{background:var(--azul-50);color:var(--tinta)}
+main{padding:40px 0 80px;min-width:0}
+.hero{background:var(--tinta);color:#fff;border-radius:24px;padding:44px 44px 40px;position:relative;overflow:hidden;margin-bottom:40px}
+.hero:after{content:'';position:absolute;inset:0;background:radial-gradient(80% 120% at 85% 110%,rgba(79,107,255,.55),transparent 60%);pointer-events:none}
+.hero>*{position:relative}
+.selo{display:inline-block;font:600 11px var(--texto-f);letter-spacing:.12em;color:var(--tinta);background:var(--citrico);border-radius:999px;padding:5px 12px}
+.hero h1{font:700 clamp(32px,4.4vw,50px)/1.08 var(--display);letter-spacing:-.025em;margin:18px 0 14px}
+.hero h1 span{color:#8FA3FF}
+.hero p{font-size:18px;color:#D5DAE8;max-width:640px;margin:0}
+section{background:#fff;border:1px solid var(--linha);border-radius:24px;padding:36px 40px;margin:0 0 24px;box-shadow:0 1px 3px rgba(11,16,48,.06)}
+.num{font:600 11px var(--texto-f);letter-spacing:.12em;color:var(--azul)}
+h2{font:700 clamp(24px,2.6vw,30px)/1.18 var(--display);letter-spacing:-.02em;color:var(--tinta);margin:8px 0 14px}
+h3{font:600 19px/1.3 var(--display);color:var(--tinta);margin:28px 0 8px}
+p{margin:0 0 14px}
+.lead{font-size:18px;color:var(--texto)}
+ul,ol{padding-left:22px;margin:0 0 14px}
+li{margin:6px 0}
+strong{color:var(--tinta)}
+.fluxo{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 8px}
+.fluxo div{background:var(--fundo);border:1px solid var(--linha);border-radius:16px;padding:16px}
+.fluxo b{display:block;font:700 15px var(--display);color:var(--tinta);margin:6px 0 4px}
+.fluxo small{display:block;color:var(--cinza);font-size:14px;line-height:1.5}
+.fluxo i{font-style:normal;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:999px;background:var(--azul);color:#fff;font:600 13px var(--display)}
+.passos{counter-reset:p;list-style:none;padding:0}
+.passos>li{counter-increment:p;position:relative;padding:4px 0 10px 46px;margin:0}
+.passos>li:before{content:counter(p);position:absolute;left:0;top:2px;width:30px;height:30px;border-radius:999px;background:var(--azul-50);color:var(--azul);font:700 14px var(--display);display:grid;place-items:center}
+.tabela{overflow-x:auto;margin:14px 0 18px;border:1px solid var(--linha);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font:600 11px var(--texto-f);letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);background:var(--fundo);padding:12px 16px;border-bottom:1px solid var(--linha)}
+td{padding:12px 16px;border-bottom:1px solid var(--linha);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;color:var(--tinta);white-space:nowrap}
+.caixa{border-radius:16px;padding:16px 20px;margin:16px 0;font-size:15px}
+.caixa.dica{background:var(--azul-50);border-left:4px solid var(--azul)}
+.caixa.atencao{background:#FFF6E8;border-left:4px solid var(--alerta)}
+.caixa.ok{background:#E9F7F0;border-left:4px solid var(--sucesso)}
+.caixa b{color:var(--tinta)}
+.caixa p:last-child{margin:0}
+.modelo{background:var(--tinta);color:#E4E7F0;border-radius:16px;padding:22px 24px;font-size:15px;line-height:1.7;margin:16px 0}
+.modelo b{color:var(--citrico);font-weight:600}
+.dims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.dim{border:1px solid var(--linha);border-radius:16px;padding:18px 20px;background:var(--fundo)}
+.dim h4{font:600 17px var(--display);color:var(--tinta);margin:0 0 4px}
+.dim .q{font-size:14px;color:var(--cinza);margin:0 0 10px}
+.dim dl{margin:0;font-size:14px}
+.dim dt{display:inline;font-weight:600;color:var(--tinta)}
+.dim dt:after{content:' — ';color:var(--cinza-400);font-weight:400}
+.dim dd{display:inline;margin:0;color:var(--texto)}
+.dim dd:after{content:'';display:block;margin-bottom:5px}
+.papeis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.papel{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.papel i{flex:0 0 14px;height:14px;border-radius:4px;background:var(--c);margin-top:5px}
+.papel b{color:var(--tinta)}
+.tela{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.tela div{border:1px solid var(--linha);border-radius:16px;padding:16px 18px}
+.tela b{display:block;font:600 15px var(--display);color:var(--tinta);margin-bottom:4px}
+.tela span{font-size:14px;color:var(--texto)}
+.eixo{display:inline-block;background:var(--azul-50);color:var(--azul-700);border-radius:999px;padding:1px 10px;font-size:13px;font-weight:600}
+footer{max-width:1180px;margin:auto;padding:24px;color:var(--cinza);font-size:13px;border-top:1px solid var(--linha)}
+@media(max-width:900px){.grade{grid-template-columns:1fr;gap:0}nav.indice{display:none}.fluxo{grid-template-columns:repeat(2,1fr)}.dims,.papeis,.tela{grid-template-columns:1fr}section{padding:26px 20px}.hero{padding:32px 24px}}
+@media(max-width:480px){.topo-in{padding:0 16px}.grade{padding:0 16px}.fluxo{grid-template-columns:1fr}.marca span{display:none}td:first-child{white-space:normal}}
+</style></head>
+<body>
+<header class="topo"><div class="topo-in"><a class="marca" href="/" aria-label="Voltar ao Decode Botwise"><img src="/logo.svg" alt="Botwise"><span>decode</span></a><a class="voltar" href="/">← Voltar ao painel</a></div></header>
+<div class="grade">
+<nav class="indice" aria-label="Índice"><p>NESTE MANUAL</p><ol>
+<li><a href="#o-que-e">O que é o Decode</a></li>
+<li><a href="#como-funciona">Como funciona</a></li>
+<li><a href="#rodar">Rodar uma análise</a></li>
+<li><a href="#tela">Entender a tela</a></li>
+<li><a href="#glossario">O que cada rótulo significa</a></li>
+<li><a href="#dados-para-post">Do dado ao post</a></li>
+<li><a href="#cuidados">Cuidados ao interpretar</a></li>
+<li><a href="#ferramentas">Outras ferramentas</a></li>
+<li><a href="#problemas">Problemas comuns</a></li>
+</ol></nav>
+<main>
+<div class="hero"><span class="selo">MANUAL DE USO</span><h1>Descubra <span>como</span> os melhores criadores falam.</h1><p>O Decode lê o que é dito em cada Reel, organiza os roteiros em padrões e cruza com o alcance. Você sai sabendo qual estrutura usar no seu próximo post.</p></div>
+
+<section id="o-que-e"><div class="num">01</div><h2>O que é o Decode</h2>
+<p class="lead">É um laboratório de pesquisa de conteúdo. Você escolhe um perfil público do Instagram e o Decode analisa os Reels dele.</p>
+<p>Para cada Reel ele descobre <strong>como o vídeo foi falado</strong>: que tipo de abertura usou, como o roteiro foi organizado, que tipo de prova apresentou e se pediu alguma ação. Depois junta os vídeos parecidos e mostra quais formatos tiveram mais alcance.</p>
+<p>O resultado não é um conteúdo pronto para copiar. É um <strong>mapa de estruturas</strong> que funcionam com aquele público, para você aplicar com a sua experiência e o seu assunto.</p>
+<div class="caixa dica"><p><b>Use para:</b> estudar um criador que você admira, entender um nicho antes de entrar nele, ou analisar o seu próprio perfil e descobrir quais formatos seus vale repetir.</p></div>
+</section>
+
+<section id="como-funciona"><div class="num">02</div><h2>Como funciona</h2>
+<p>Quatro etapas, nesta ordem:</p>
+<div class="fluxo">
+<div><i>1</i><b>Coleta</b><small>O Apify busca os Reels públicos do perfil, com miniatura, legenda e métricas.</small></div>
+<div><i>2</i><b>Transcrição</b><small>O Groq ouve o áudio de cada vídeo e transforma a fala em texto.</small></div>
+<div><i>3</i><b>Classificação</b><small>O Jev lê só o texto e rotula gancho, estrutura, tema, prova e CTA.</small></div>
+<div><i>4</i><b>Você</b><small>Filtra, compara os padrões e lê os roteiros por trás dos números.</small></div>
+</div>
+<p>Um detalhe importante: o Jev classifica <strong>antes</strong> de ver os números. Ele não sabe se o vídeo viralizou quando decide o rótulo. Só depois os rótulos são cruzados com reproduções, curtidas e comentários. Isso evita que a classificação seja influenciada pelo resultado.</p>
+<p>O vídeo em si <strong>não fica salvo</strong>. Ele é baixado, o áudio é transcrito e o arquivo é apagado na hora. Ficam guardados só os dados, a miniatura e o link para o Reel original no Instagram.</p>
+</section>
+
+<section id="rodar"><div class="num">03</div><h2>Rodar uma análise</h2>
+<ol class="passos">
+<li>No painel, clique no botão amarelo <strong>Nova análise</strong>, no canto superior direito.</li>
+<li>Em <strong>Perfil do Instagram</strong>, digite o usuário, com ou sem @. Exemplo: <code>joeljota</code>. O perfil precisa ser público.</li>
+<li>Ajuste as opções explicadas na tabela abaixo.</li>
+<li>Clique em <strong>Criar e iniciar análise</strong>. O andamento aparece nos contadores do topo e na barra de progresso.</li>
+<li>Quando a barra completar e o estado mudar para <strong>concluída</strong>, os resultados estão prontos.</li>
+</ol>
+<div class="tabela"><table><thead><tr><th>Campo</th><th>O que é</th><th>Recomendação</th></tr></thead><tbody>
+<tr><td>Reels para coletar</td><td>Quantos Reels mais recentes buscar.</td><td>Comece com <strong>20 (piloto)</strong>. Para conclusões mais firmes, use 100 ou mais.</td></tr>
+<tr><td>Pedidos paralelos</td><td>Quantos Reels são processados ao mesmo tempo.</td><td>Deixe em <strong>4</strong>. Mais rápido não muda o custo, mas pode bater limite das ferramentas.</td></tr>
+<tr><td>Teto de gasto no Apify</td><td>Valor máximo que o Apify pode cobrar nessa coleta.</td><td><strong>US$ 1</strong> sobra para até uns 300 Reels. Vale só para o Apify.</td></tr>
+<tr><td>Idioma falado</td><td>Ajuda a transcrição a acertar as palavras.</td><td><strong>Português</strong> para perfis brasileiros. Use "Detectar sozinho" se o perfil mistura idiomas.</td></tr>
+</tbody></table></div>
+<h3>Quanto custa</h3>
+<p>Valores aproximados, medidos na primeira análise real (20 Reels por US$ 0,08):</p>
+<div class="tabela"><table><thead><tr><th>Reels</th><th>Custo total estimado</th><th>Tempo aproximado</th></tr></thead><tbody>
+<tr><td>20</td><td>US$ 0,08</td><td>3 minutos</td></tr>
+<tr><td>100</td><td>US$ 0,40</td><td>10 a 15 minutos</td></tr>
+<tr><td>500</td><td>US$ 2,00</td><td>1 hora</td></tr>
+</tbody></table></div>
+<div class="caixa atencao"><p><b>Nunca crie uma análise nova para tentar de novo.</b> Se algo parar no meio, selecione a análise em "Suas pesquisas" e clique em <b>Iniciar / retomar</b>. Uma análise nova faz o Apify cobrar a coleta outra vez. Transcrições e classificações já feitas são reaproveitadas e não são cobradas de novo.</p></div>
+<p>Para interromper, use <strong>Pausar análise</strong>. Os pedidos que já estão em andamento terminam e o resto espera até você retomar.</p>
+</section>
+
+<section id="tela"><div class="num">04</div><h2>Entender a tela</h2>
+<p>O painel é lido de cima para baixo. Em "Suas pesquisas", à direita do título, você escolhe qual perfil analisado quer ver.</p>
+<h3>Contadores do topo</h3>
+<p>Mostram quantos Reels foram coletados, transcritos e classificados, e o custo estimado do Jev. A barra à direita mostra o progresso. O custo detalhado de cada ferramenta aparece logo abaixo dela.</p>
+<h3>Parede de miniaturas e mapa de desempenho</h3>
+<div class="tela">
+<div><b>01 · Parede de miniaturas</b><span>Todos os Reels do perfil. A faixa colorida embaixo de cada um mostra a categoria na classificação escolhida em "Comparar / colorir por".</span></div>
+<div><b>02 · Mapa de desempenho</b><span>Cada Reel vira um ponto. Na horizontal <span class="eixo">alcance</span>: quanto mais à direita, mais reproduções. Na vertical <span class="eixo">curtidas por mil</span>: quanto mais alto, mais engajamento.</span></div>
+</div>
+<p>As linhas tracejadas no mapa são as medianas. O canto <strong>superior direito</strong> reúne os Reels que tiveram muito alcance e muito engajamento ao mesmo tempo. São os melhores para estudar.</p>
+<p>Clique em qualquer miniatura para abrir o Reel no painel da direita. Use as etiquetas coloridas acima da parede para destacar uma categoria só.</p>
+<h3>Filtros</h3>
+<div class="tabela"><table><thead><tr><th>Filtro</th><th>Para que serve</th></tr></thead><tbody>
+<tr><td>Tema + Gancho</td><td>Cruza as duas coisas. Exemplo: só Reels de "Mentalidade" com gancho "Direto".</td></tr>
+<tr><td>Comparar / colorir por</td><td>Escolhe qual das 8 classificações aparece nas cores e na tabela de padrões.</td></tr>
+<tr><td>Métrica</td><td>Visualizações ou reproduções. O Instagram costuma informar só uma delas, e o app escolhe sozinho.</td></tr>
+<tr><td>Idade do post</td><td>"7+ dias" tira os posts muito novos, que ainda estão ganhando alcance. Deixa a comparação mais justa.</td></tr>
+<tr><td>Confiança</td><td>Mostra só os rótulos em que o Jev teve mais certeza. Útil para conferir se um padrão se mantém.</td></tr>
+<tr><td>Duração</td><td>Separa vídeos curtos e longos.</td></tr>
+<tr><td>Ocultar roteiros repetidos</td><td>Esconde Reels com a mesma fala, como repostagens.</td></tr>
+</tbody></table></div>
+<h3>Por trás do quadro (painel da direita)</h3>
+<p>Mostra o Reel selecionado: a frase de abertura em destaque, as métricas, o link <strong>Ver no Instagram</strong> e a <strong>Anatomia do roteiro</strong>. A anatomia é uma barra colorida que divide a fala em partes, como gancho, contexto, conselho e desfecho. Abaixo dela fica a transcrição inteira, com o tempo de cada trecho. Em "Todas as classificações e a confiança" você vê os 8 rótulos e a certeza do Jev em cada um.</p>
+<h3>Quais padrões se conectam?</h3>
+<p>É a parte mais importante. A tabela agrupa os Reels pela classificação escolhida e mostra, para cada grupo:</p>
+<ul>
+<li><strong>Reels:</strong> quantos vídeos têm aquele padrão. Grupos com menos de 5 recebem o aviso "Amostra pequena".</li>
+<li><strong>Visualizações ou reproduções (mediana):</strong> o alcance típico daquele padrão.</li>
+<li><strong>Curtidas / mil e Comentários / mil:</strong> quanto o público reage a cada mil pessoas que assistem. Mede engajamento independente do tamanho do alcance.</li>
+</ul>
+<p>Use <strong>Ver Reels</strong> para abrir os exemplos daquele padrão, do melhor para o pior. Marque duas linhas em <strong>Comparar</strong> para ver os dois padrões lado a lado.</p>
+<div class="caixa dica"><p><b>Por que mediana e não média?</b> Um único vídeo viral puxa a média para cima e engana. A mediana é o valor do meio, então mostra o resultado típico do padrão.</p></div>
+</section>
+
+<section id="glossario"><div class="num">05</div><h2>O que cada rótulo significa</h2>
+<p>O Jev dá 8 classificações para cada Reel. Esta é a lista completa de categorias, a mesma usada no painel.</p>
+<div class="dims" id="dims"></div>
+<h3>Partes do roteiro (anatomia)</h3>
+<p>Cada trecho da fala recebe um papel. As cores são as mesmas da barra no painel.</p>
+<div class="papeis" id="papeis"></div>
+<p style="margin-top:14px">"Indefinido" aparece quando a fala é curta demais, ambígua ou não se encaixa em nenhuma categoria.</p>
+</section>
+
+<section id="dados-para-post"><div class="num">06</div><h2>Do dado ao post</h2>
+<p class="lead">O objetivo é sair da análise com a estrutura do seu próximo vídeo. Siga este método:</p>
+<ol class="passos">
+<li><strong>Ache o padrão que se destaca.</strong> Em "Quais padrões se conectam?", troque entre Mecanismo do gancho, Estrutura do roteiro e Tema. Anote os grupos com alcance acima da mediana geral e com pelo menos 5 Reels.</li>
+<li><strong>Cruze com um tema que você domina.</strong> Use os filtros Tema e Gancho no topo. O que funciona em "Mentalidade" pode não funcionar em "Negócios".</li>
+<li><strong>Leia 3 roteiros do padrão.</strong> Clique em "Ver Reels" e depois em "Ler roteiro". Observe a frase de abertura, a ordem das partes na barra colorida e como o vídeo termina. Assista no Instagram para ver o ritmo.</li>
+<li><strong>Monte o esqueleto.</strong> Escreva só a estrutura, sem o conteúdo do criador: "abre com uma ordem curta, depois 3 passos, fecha com uma frase de efeito".</li>
+<li><strong>Preencha com a sua experiência.</strong> Seu assunto, seus exemplos, sua linguagem. Grave, publique e depois analise o seu próprio perfil para ver se o padrão funcionou com o seu público.</li>
+</ol>
+<h3>Exemplo real</h3>
+<p>Na análise de 20 Reels do @joeljota, os vídeos com gancho <strong>Direto</strong> e estrutura em <strong>Passos</strong> tiveram alcance acima da mediana. O campeão, com 1,4 milhão de reproduções, abre com uma ordem curta e segue só com conselhos. Os dois piores começavam explicando um problema antes de entregar algo. A estrutura que sai daí:</p>
+<div class="modelo"><b>Gancho (uma frase):</b> uma ordem direta que já entrega a ideia.<br>"Pare de esperar estar pronto para começar."<br><br><b>Passos (3 a 5):</b> ações concretas, uma por frase.<br>"Primeiro... Depois... Por último..."<br><br><b>Desfecho (uma frase):</b> conclusão de efeito, sem enrolar.<br>"Quem age antes de estar pronto chega primeiro."</div>
+<div class="caixa ok"><p><b>Também funciona no seu perfil.</b> Analise as suas próprias contas para descobrir quais temas e formatos seus já funcionam e merecem ser repetidos.</p></div>
+</section>
+
+<section id="cuidados"><div class="num">07</div><h2>Cuidados ao interpretar</h2>
+<ul>
+<li><strong>Amostra pequena engana.</strong> Um padrão com 1 ou 2 Reels é só uma pista. Para tomar decisão, prefira grupos com 5 ou mais vídeos, ou rode uma análise maior.</li>
+<li><strong>Associação não é causa.</strong> O painel mostra o que aconteceu junto, não o que causou o resultado. Um vídeo pode ter ido bem pelo assunto do momento, pela edição ou pelo horário, e não pelo gancho.</li>
+<li><strong>Confira os rótulos em português.</strong> O Jev funciona melhor em inglês. Em perfis brasileiros ele marca mais Reels para revisão. Antes de confiar num padrão, leia alguns roteiros e veja se a classificação faz sentido. O filtro "Confiança 65%+" ajuda.</li>
+<li><strong>Posts novos ainda estão crescendo.</strong> Use "Idade do post: 7+ dias" para não comparar um vídeo de ontem com um de dois meses atrás.</li>
+<li><strong>Só a fala é analisada.</strong> Imagens, legendas na tela, cortes e música não entram na classificação. Um CTA escrito na tela, por exemplo, não aparece como CTA falado.</li>
+<li><strong>Os números são uma foto.</strong> As métricas são as do dia da coleta. Para atualizar, rode a análise de novo mais tarde.</li>
+</ul>
+</section>
+
+<section id="ferramentas"><div class="num">08</div><h2>Outras ferramentas</h2>
+<div class="tabela"><table><thead><tr><th>Ferramenta</th><th>Onde fica</th><th>Para que serve</th></tr></thead><tbody>
+<tr><td>Estúdio de gravação</td><td>Botão no topo do painel</td><td>Transforma uma análise pronta em animação, no tamanho certo para gravar a tela e postar como vídeo. Tem 3 layouts e não gasta nada.</td></tr>
+<tr><td>Exportar</td><td>Botão "Exportar" ao lado de "Suas pesquisas"</td><td>Baixa a análise inteira em arquivo JSON, para guardar ou usar em outra ferramenta.</td></tr>
+<tr><td>Painel de dados</td><td><a href="https://srv-reelsdb.botwise.com.br/_/" target="_blank" rel="noopener noreferrer">srv-reelsdb.botwise.com.br</a></td><td>Todas as análises e Reels em tabelas (PocketBase). Dá para filtrar, ordenar e exportar em CSV para planilha.</td></tr>
+<tr><td>Ligar e desligar</td><td>Dockge, em srv-painel.botwise.com.br, stack "analise-reels"</td><td>Desliga o Decode quando não estiver em uso. Pause a análise antes de desligar.</td></tr>
+<tr><td>O que o Jev analisa</td><td>Botão na barra de filtros</td><td>Mostra a lista de classificações e categorias sem sair do painel.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="problemas"><div class="num">09</div><h2>Problemas comuns</h2>
+<div class="tabela"><table><thead><tr><th>O que aparece</th><th>O que fazer</th></tr></thead><tbody>
+<tr><td>Nenhum Reel voltou</td><td>Confira se o usuário está certo e se o perfil é público. Perfis privados não podem ser analisados.</td></tr>
+<tr><td>Análise parou no meio</td><td>Selecione a análise e clique em "Iniciar / retomar". Não crie uma nova.</td></tr>
+<tr><td>"Sem áudio" ou "Pouca fala"</td><td>O Reel só tem música ou quase nenhuma fala. Ele fica fora da análise de roteiro, e isso é normal.</td></tr>
+<tr><td>Erro de limite ou cota</td><td>Uma das ferramentas pagas atingiu o limite do mês. Espere renovar ou fale com quem administra as chaves.</td></tr>
+<tr><td>Página não carrega dados</td><td>Recarregue a página com Ctrl + F5.</td></tr>
+<tr><td>Endereço fora do ar</td><td>O Decode pode estar desligado no Dockge. Ligue a stack "analise-reels" e aguarde 1 minuto.</td></tr>
+</tbody></table></div>
+</section>
+</main></div>
+<footer>Decode Botwise · baseado no <a href="https://github.com/artemnovitckii/creator-lab" target="_blank" rel="noopener noreferrer">Creator Lab</a>, de Artem Novitckii (licença MIT). Classificação por Jev, da TypeSafe.</footer>
+<script type="module">
+import {DIMENSOES,ROTULOS,PAPEIS} from '/i18n.mjs';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PERGUNTA={topic:'Sobre o que é o vídeo inteiro.',opening:'O formato da primeira frase falada.',mechanism:'O motivo que a abertura dá para continuar assistindo.',structure:'Como o roteiro inteiro é organizado.',evidence:'Que tipo de sustentação o criador oferece.',emotion:'Que emoção as palavras tentam despertar.',specificity:'Quão prático é o conselho.',cta:'O pedido de ação falado no fim.'};
+document.getElementById('dims').innerHTML=Object.entries(DIMENSOES).map(([k,d])=>`<div class="dim"><h4>${esc(d.titulo)}</h4><p class="q">${esc(PERGUNTA[k]||'')}</p><dl>${Object.entries(d.criterios).filter(([c])=>c!=='unclear').map(([c,t])=>`<dt>${esc(ROTULOS[c]||c)}</dt><dd>${esc(t)}</dd>`).join('')}</dl></div>`).join('');
+const CORES={hook:'#2438E8',setup:'#8FA3FF',problem:'#E5484D',example:'#0E9FB5',advice:'#1F9D61',payoff:'#7C5CE6',cta:'#B9C61E',other:'#C4C9D6'};
+document.getElementById('papeis').innerHTML=Object.entries(PAPEIS).map(([k,t])=>`<div class="papel"><i style="--c:${CORES[k]}"></i><span><b>${esc(ROTULOS[k]||k)}:</b> ${esc(t)}</span></div>`).join('');
+</script>
+</body></html>
