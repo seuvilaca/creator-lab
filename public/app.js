@@ -32,7 +32,7 @@ function readStats(){
  $('#run-state').textContent=estado(job.status);$('#run-error').textContent=traduz(job.error||'');
  $('#attach-form').hidden=!job.scrapeUncertain;
  $('#events').textContent=(job.events||[]).slice().reverse().map(e=>`${new Date(e.at).toLocaleTimeString(LOCALE)}  ${traduz(e.message)}`).join('\n');
- const running=['running','scraping'].includes(job.status);$('#resume').hidden=job.synthetic||running;$('#pause').hidden=job.synthetic||!running;$('#export').hidden=job.synthetic;
+ const running=['running','scraping'].includes(job.status);$('#resume').hidden=job.synthetic||running;$('#pause').hidden=job.synthetic||!running;$('#export').hidden=job.synthetic;$('#resumo').hidden=job.synthetic||!job.posts.some(p=>p.analysis);$('#resumo').href='/resumo?run='+encodeURIComponent(job.id);
  $('#run-note').textContent=job.synthetic?'Veja a demonstração. Rode uma análise para ver dados reais.':`${decimal(job.elapsedMs/1000)}s de processamento · ${completed.filter(p=>p.analysis.review).length} rótulos para revisar`;
 }
 function calculate(){

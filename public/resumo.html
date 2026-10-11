@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resumo prático · Decode Botwise</title><link rel="icon" type="image/png" href="/favicon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap');
+:root{--azul:#2438E8;--azul-700:#1C2CC0;--azul-50:#EEF1FF;--azul-200:#B9C6FF;--tinta:#0B1030;--texto:#2A2E45;--cinza:#5C6274;--cinza-400:#9CA3B8;--linha:#E4E7F0;--fundo:#F6F7FB;--citrico:#DDF247;--sucesso:#1F9D61;--alerta:#DB8B1F;--erro:#E5484D;--display:'Sora',system-ui,sans-serif;--sans:'Instrument Sans',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--azul);font-weight:600;text-decoration:none;border-bottom:1px solid var(--azul-200)}
+.topo{position:sticky;top:0;z-index:10;background:rgba(246,247,251,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--linha)}
+.topo-in{max-width:960px;margin:auto;min-height:68px;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.marca{display:flex;align-items:center;gap:10px;border:0}
+.marca img{height:30px;display:block}
+.marca span{font:700 18px var(--display);color:var(--azul);padding-left:10px;border-left:1px solid var(--linha)}
+.acoes{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+select{font:500 14px var(--sans);border:1px solid var(--linha);border-radius:10px;padding:8px 10px;background:#fff;color:var(--texto);max-width:280px}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:9px 16px;font:600 14px var(--sans);border:1px solid var(--linha);background:#fff;color:var(--tinta);cursor:pointer}
+.btn:hover{background:var(--azul-50)}
+.btn.prim{background:var(--azul);color:#fff;border-color:var(--azul);box-shadow:0 6px 24px rgba(36,56,232,.3)}
+.btn.prim:hover{background:var(--azul-700)}
+main{max-width:960px;margin:auto;padding:32px 24px 64px}
+.hero{background:var(--tinta);color:#fff;border-radius:24px;padding:40px;position:relative;overflow:hidden;margin-bottom:24px}
+.hero:after{content:'';position:absolute;inset:0;background:radial-gradient(80% 120% at 85% 110%,rgba(79,107,255,.55),transparent 60%);pointer-events:none}
+.hero>*{position:relative}
+.selo{display:inline-block;font:600 11px var(--sans);letter-spacing:.12em;color:var(--tinta);background:var(--citrico);border-radius:999px;padding:5px 12px}
+.hero h1{font:700 clamp(28px,4vw,44px)/1.1 var(--display);letter-spacing:-.025em;margin:16px 0 12px}
+.hero h1 span{color:#8FA3FF}
+.hero p{font-size:17px;color:#D5DAE8;margin:0;max-width:680px}
+.hero b{color:#fff}
+section{background:#fff;border:1px solid var(--linha);border-radius:24px;padding:32px 36px;margin:0 0 20px;box-shadow:0 1px 3px rgba(11,16,48,.06)}
+.num{font:600 11px var(--sans);letter-spacing:.12em;color:var(--azul)}
+h2{font:700 clamp(22px,2.4vw,28px)/1.2 var(--display);letter-spacing:-.02em;color:var(--tinta);margin:6px 0 12px}
+.lead{font-size:17px;margin:0 0 18px}
+b,strong{color:var(--tinta)}
+.receita{border:1px solid var(--linha);border-radius:18px;padding:22px 24px;margin:14px 0;background:var(--fundo)}
+.rec-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.rec-num{font:700 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--azul)}
+.receita h3{font:700 21px/1.25 var(--display);color:var(--tinta);margin:8px 0 4px}
+.rec-res{margin:0 0 12px;color:var(--cinza)}
+.passos-rec{list-style:none;padding:0;margin:0 0 10px}
+.passos-rec li{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:10px 14px;margin:8px 0}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--azul);font-weight:600;font-size:15px}
+.exemplo{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--linha);font-size:15px}
+.exemplo:last-child{border:0}
+.exemplo b{font:700 16px var(--display)}
+.exemplo a{white-space:nowrap;font-size:14px}
+.forca{font:600 12px var(--sans);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.forca.forte{background:#E3F5EC;color:#137a4a}
+.forca.medio{background:#FFF1DB;color:#9a5f0f}
+.forca.pista{background:#EEF0F6;color:var(--cinza)}
+.tabela{overflow-x:auto;border:1px solid var(--linha);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--cinza);background:var(--fundo);padding:11px 16px;border-bottom:1px solid var(--linha)}
+td{padding:11px 16px;border-bottom:1px solid var(--linha);vertical-align:middle}
+tr:last-child td{border:0}
+td:first-child{color:var(--tinta);font-weight:500}
+td small{color:var(--cinza);margin-left:4px}
+.sobe{color:var(--sucesso);font:700 16px var(--display)}
+.desce{color:var(--erro);font:700 16px var(--display)}
+.lista{padding-left:20px;margin:0}
+.lista li{margin:8px 0}
+.plano{padding-left:22px;margin:0}
+.plano li{margin:10px 0}
+.cuidados{background:var(--azul-50);border-color:var(--azul-200)}
+.carregando{text-align:center;color:var(--cinza);padding:60px 0}
+@media(max-width:640px){main{padding:20px 16px 48px}.topo-in{padding:10px 16px}section{padding:24px 18px}.hero{padding:28px 22px}.exemplo{grid-template-columns:56px 1fr}.exemplo a{grid-column:2}.marca span{display:none}select{max-width:100%}}
+@media print{.topo{display:none}body{background:#fff}main{padding:0}section,.hero{box-shadow:none;break-inside:avoid}details{display:block}details>*{display:block}summary{display:none}.receita{break-inside:avoid}}
+</style></head>
+<body>
+<header class="topo"><div class="topo-in"><a class="marca" href="/" aria-label="Voltar ao painel"><img src="/logo.svg" alt="Botwise"><span>decode</span></a>
+<div class="acoes"><select id="escolha" aria-label="Escolher análise"></select><button class="btn" id="imprimir">Salvar em PDF</button><a class="btn prim" href="/" style="border-bottom:0">← Painel</a></div></div></header>
+<main id="conteudo"><p class="carregando">Montando o resumo…</p></main>
+<script type="module" src="/resumo.mjs"></script>
+</body></html>

@@ -80,3 +80,4 @@ footer a{color:var(--brand)}
 .preview-media{border-radius:10px}
 .connection:before,.status-dot{background:#1F9D61}
 .manual-link{font-weight:600;color:var(--brand);font-size:14px;padding:8px 12px;border-radius:999px}.manual-link:hover{background:var(--brand-50)}
+.resumo-link{font-weight:600;color:var(--brand)!important;background:var(--brand-50);border-radius:999px}
