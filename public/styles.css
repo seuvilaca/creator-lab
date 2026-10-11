@@ -81,3 +81,28 @@ footer a{color:var(--brand)}
 .connection:before,.status-dot{background:#1F9D61}
 .manual-link{font-weight:600;color:var(--brand);font-size:14px;padding:8px 12px;border-radius:999px}.manual-link:hover{background:var(--brand-50)}
 .resumo-link{font-weight:600;color:var(--brand)!important;background:var(--brand-50);border-radius:999px}
+
+.funil{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin:-8px 0 23px;box-shadow:0 1px 3px rgba(11,16,48,.06)}
+.funil-fluxo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 6px}
+.funil-fluxo i{font-style:normal;color:var(--muted);font-size:18px}
+.funil-etapa{background:#F6F7FB;border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:120px}
+.funil-etapa strong{display:block;font:600 24px var(--serif);color:var(--title);letter-spacing:-.02em}
+.funil-etapa span{font-size:12px;color:var(--muted)}
+.funil-etapa.ok{background:#E9F7F0;border-color:#BFE5D2}
+.funil-etapa.ok strong{color:#137a4a}
+.funil-etapa.fora{background:#FFF6E8;border-color:#F3D9AE}
+.funil-etapa.fora strong{color:#9a5f0f}
+.funil-etapa.espera{background:var(--brand-50);border-color:#B9C6FF}
+.funil-motivos p{margin:8px 0;font-size:13px;line-height:1.6;color:var(--ink)}
+.funil-motivos b{color:var(--title)}
+.funil-lista{margin-top:10px;font-size:13px}
+.funil-lista summary{cursor:pointer;color:var(--brand);font-weight:600}
+.funil-lista table{margin-top:10px}
+.funil-lista a{color:var(--brand);font-weight:600;white-space:nowrap}
+.funil-tag{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;background:#EEF0F6;color:var(--muted);white-space:nowrap}
+.funil-tag.no_speech{background:#FFF1DB;color:#9a5f0f}
+.funil-tag.no_audio{background:#EEF0F6;color:#5C6274}
+.funil-tag.failed{background:#FDE8E9;color:#B4232A}
+.funil-mudo{color:var(--muted);font-style:italic}
+@media(max-width:760px){.funil{padding:14px}.funil-etapa{min-width:0;flex:1}.funil-fluxo i{display:none}}
+.funil-dica{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.6}

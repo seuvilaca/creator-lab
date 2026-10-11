@@ -32,7 +32,7 @@ function readStats(){
  $('#run-state').textContent=estado(job.status);$('#run-error').textContent=traduz(job.error||'');
  $('#attach-form').hidden=!job.scrapeUncertain;
  $('#events').textContent=(job.events||[]).slice().reverse().map(e=>`${new Date(e.at).toLocaleTimeString(LOCALE)}  ${traduz(e.message)}`).join('\n');
- const running=['running','scraping'].includes(job.status);$('#resume').hidden=job.synthetic||running;$('#pause').hidden=job.synthetic||!running;$('#export').hidden=job.synthetic;$('#resumo').hidden=job.synthetic||!job.posts.some(p=>p.analysis);$('#resumo').href='/resumo?run='+encodeURIComponent(job.id);
+ renderFunil();const running=['running','scraping'].includes(job.status);$('#resume').hidden=job.synthetic||running;$('#pause').hidden=job.synthetic||!running;$('#export').hidden=job.synthetic;$('#resumo').hidden=job.synthetic||!job.posts.some(p=>p.analysis);$('#resumo').href='/resumo?run='+encodeURIComponent(job.id);
  $('#run-note').textContent=job.synthetic?'Veja a demonstração. Rode uma análise para ver dados reais.':`${decimal(job.elapsedMs/1000)}s de processamento · ${completed.filter(p=>p.analysis.review).length} rótulos para revisar`;
 }
 function calculate(){
@@ -164,3 +164,35 @@ $('#new-form').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disab
 $('#connections-form').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;$('#connections-result').textContent='Verificando o acesso às ferramentas…';try{await api('/api/connections',Object.fromEntries(new FormData(e.target)));e.target.reset();const checks=await api('/api/connections/check',{});$('#connections-result').textContent=Object.entries(checks).map(([k,v])=>`${title(k)}: ${v.verified?'verificada':traduz(v.error)||'chave necessária'}`).join(' · ');await refresh();}catch(err){$('#connections-result').textContent=traduz(err.message);}finally{b.disabled=false;}};
 $('#attach-form').onsubmit=async e=>{e.preventDefault();try{await api(`/api/runs/${job.id}/attach`,{runId:$('#attach-id').value.trim()});await loadJob(job.id);toast('Execução do Apify anexada. Clique em retomar para buscar os resultados.');}catch(err){toast(err.message);}};
 start().catch(e=>{toast(e.message);$('#notice').textContent='Não foi possível carregar o app. '+traduz(e.message);});
+
+// Decode Botwise: bloco "Do pedido à análise" (coletados x analisados e o motivo de cada exclusão).
+function renderFunil(){
+ const box=$('#funil');if(!job||job.synthetic){box.hidden=true;box.innerHTML='';return;}
+ const ps=job.posts;const analisados=ps.filter(p=>p.analysis&&!p.excludedReason);
+ const poucaFala=ps.filter(p=>p.status==='no_speech'),semAudio=ps.filter(p=>p.status==='no_audio'),falhas=ps.filter(p=>p.status==='failed');
+ const fora=[...poucaFala,...semAudio,...falhas];const ids=new Set([...analisados,...fora].map(p=>p.id));const aguardando=ps.filter(p=>!ids.has(p.id));
+ const pedidos=job.imported?null:job.limit;const coletando=job.status==='scraping'&&!ps.length;
+ if(!ps.length&&!coletando){box.hidden=true;return;}
+ box.hidden=false;
+ const etapa=(n,t,cls='')=>`<div class="funil-etapa ${cls}"><strong>${n}</strong><span>${t}</span></div>`;
+ let h='<div class="funil-topo"><span class="eyebrow">DO PEDIDO À ANÁLISE</span></div><div class="funil-fluxo">';
+ if(pedidos!=null)h+=etapa(compact(pedidos),'pedidos ao Apify')+'<i>→</i>';
+ h+=etapa(coletando?'…':compact(ps.length),'Reels coletados')+'<i>→</i>'+etapa(compact(analisados.length),'com fala, analisados','ok');
+ if(fora.length)h+=etapa(compact(fora.length),'ficaram de fora','fora');
+ if(aguardando.length)h+=etapa(compact(aguardando.length),'ainda processando','espera');
+ h+='</div><div class="funil-motivos">';
+ const motivos=[];
+ if(pedidos!=null&&ps.length&&ps.length<pedidos&&!['scraping'].includes(job.status))motivos.push(`<p><b>O Apify trouxe ${ps.length} de ${pedidos} pedidos.</b> Normalmente é porque o perfil não tem mais Reels públicos nesse período. Reels fixados no topo e Reels de teste também são pulados. Só os Reels trazidos são cobrados.</p>`);
+ if(poucaFala.length)motivos.push(`<p><b>${poucaFala.length} com pouca fala.</b> O vídeo tem só música, texto na tela ou uma palavra ou outra, como "Amém" ou "Obrigado". Sem roteiro falado, não há o que classificar.</p>`);
+ if(semAudio.length)motivos.push(`<p><b>${semAudio.length} sem áudio.</b> O arquivo do vídeo não tem trilha de som. Esses não foram cobrados na transcrição.</p>`);
+ if(falhas.length)motivos.push(`<p><b>${falhas.length} com falha.</b> Algo deu errado no download ou nas ferramentas. Clique em <b>Iniciar / retomar</b> para tentar de novo, sem pagar a coleta outra vez.</p>`);
+ if(aguardando.length)motivos.push(`<p><b>${aguardando.length} ainda em processamento.</b> Aguarde a análise terminar.</p>`);
+ if(!motivos.length&&analisados.length)motivos.push('<p>Todos os Reels coletados tinham fala e foram analisados.</p>');
+ h+=motivos.join('')+'</div>';
+ if(fora.length){
+  const motivo=p=>p.status==='no_speech'?'Pouca fala':p.status==='no_audio'?'Sem áudio':'Falha';
+  const fala=p=>{const t=(p.transcript?.text||'').replace(/\s+/g,' ').trim();return t?(t.length>70?t.slice(0,67)+'…':t):'';};
+  h+=`<details class="funil-lista"><summary>Ver os ${fora.length} Reels que ficaram de fora</summary><div class="table-wrap"><table><thead><tr><th>Motivo</th><th>Publicado</th><th>Duração</th><th>O que foi ouvido</th><th></th></tr></thead><tbody>${fora.map(p=>`<tr><td><span class="funil-tag ${p.status}">${motivo(p)}</span></td><td>${p.publishedAt?new Date(p.publishedAt).toLocaleDateString(LOCALE):'—'}</td><td>${p.duration!=null?Math.round(p.duration)+'s':'—'}</td><td>${p.status==='failed'?escape(traduz(p.error||'')):fala(p)?'“'+escape(fala(p))+'”':'<span class="funil-mudo">nada</span>'}</td><td>${safeLink(p.url)?`<a href="${escape(safeLink(p.url))}" target="_blank" rel="noopener noreferrer">Ver no Instagram ↗</a>`:''}</td></tr>`).join('')}</tbody></table></div><p class="funil-dica">Textos como “Música”, “E aí” ou “Legenda Adriana Zanotto” não foram ditos no vídeo. É o que a transcrição costuma escrever quando só há música ou silêncio. Abra no Instagram para ver o conteúdo, que nesses casos está no texto da tela ou na legenda.</p></details>`;
+ }
+ box.innerHTML=h;
+}
