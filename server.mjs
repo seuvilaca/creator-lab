@@ -9,8 +9,10 @@ import {dimensions,roles,VERSION} from './lib/schema.mjs';
 import {metrics} from './lib/data.mjs';
 import {checkProvider,download} from './lib/providers.mjs';
 import {demo,artwork} from './lib/demo.mjs';
+import {Mirror} from './lib/mirror.mjs';
 const ROOT=dirname(fileURLToPath(import.meta.url));
-const PORT=Number(process.env.PORT||5190),HOST='127.0.0.1';
+const PORT=Number(process.env.PORT||5190),HOST=process.env.HOST||'127.0.0.1';
+const PUBLIC_HOST=process.env.LAB_PUBLIC_HOST||'';const ALLOWED_HOSTS=[`127.0.0.1:${PORT}`,`localhost:${PORT}`,...(PUBLIC_HOST?[PUBLIC_HOST]:[])];const ALLOWED_ORIGINS=[`http://${HOST}:${PORT}`,`http://localhost:${PORT}`,`http://127.0.0.1:${PORT}`,...(PUBLIC_HOST?[`https://${PUBLIC_HOST}`]:[])];
 const CSRF=randomBytes(32).toString('hex');
 let localEnv={};try{localEnv=parseEnv(await readFile(join(ROOT,'.env'),'utf8'));}catch{}
 const transcriptionProvider=localEnv.TRANSCRIPTION_PROVIDER||process.env.TRANSCRIPTION_PROVIDER||'fireworks';
@@ -18,6 +20,7 @@ const sessionKeys={};const verified={};
 const keys=()=>({fireworks:sessionKeys.fireworks||localEnv.FIREWORKS_API_KEY||process.env.FIREWORKS_API_KEY,apify:sessionKeys.apify||localEnv.APIFY_TOKEN||process.env.APIFY_TOKEN||process.env.APIFY_API_TOKEN,groq:sessionKeys.groq||localEnv.GROQ_API_KEY||process.env.GROQ_API_KEY,jev:sessionKeys.jev||localEnv.TYPESAFE_API_KEY||process.env.TYPESAFE_API_KEY||process.env.JEV_API_KEY});
 const pipeline=await new Pipeline(process.env.LAB_DATA_DIR||join(ROOT,'data'),keys,{transcriptionProvider,fireworksRpm:Number(localEnv.FIREWORKS_REQUESTS_PER_MINUTE||process.env.FIREWORKS_REQUESTS_PER_MINUTE||60),groqRpm:Number(localEnv.GROQ_REQUESTS_PER_MINUTE||process.env.GROQ_REQUESTS_PER_MINUTE||20)}).init();
 let mediaActive=0;const mediaWaiters=[],mediaPending=new Map();async function mediaTask(fn){if(mediaActive>=8)await new Promise(resolve=>mediaWaiters.push(resolve));else mediaActive++;try{return await fn();}finally{if(mediaWaiters.length)mediaWaiters.shift()();else mediaActive--;}}
+const mirror=Mirror.fromEnv();if(mirror){pipeline.listeners.add(id=>mirror.schedule(pipeline.jobs.get(id)));mirror.syncAll([...pipeline.jobs.values()]);console.log('PocketBase mirror: '+process.env.PB_URL);}
 const clients=new Set();pipeline.listeners.add(id=>{for(const res of clients)res.write(`data: ${JSON.stringify({id})}\n\n`);});
 const publicJob=j=>{const copy=structuredClone(j);for(const p of copy.posts){if(p.transcript)delete p.transcript.raw;if(p.analysis)delete p.analysis.raw;}return copy;};
 const summary=j=>({id:j.id,creator:j.creator,status:j.status,createdAt:j.createdAt,count:j.posts.length,completed:j.posts.filter(p=>p.analysis).length});
@@ -26,10 +29,10 @@ async function body(req){let size=0;const chunks=[];for await(const c of req){si
 const streams=setInterval(()=>{for(const res of clients)res.write(': heartbeat\n\n');},20000);streams.unref();
 const server=http.createServer(async(req,res)=>{
  try{
-  if(![`127.0.0.1:${PORT}`,`localhost:${PORT}`].includes(req.headers.host)){json(res,403,{error:'Local requests only'});return;}
+  if(!ALLOWED_HOSTS.includes(req.headers.host)){json(res,403,{error:'Local requests only'});return;}
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Frame-Options','DENY');
   const url=new URL(req.url,`http://${HOST}:${PORT}`);const path=url.pathname;
-  if(req.method!=='GET'&&(req.headers['x-lab-token']!==CSRF||req.headers.origin&&![`http://${HOST}:${PORT}`,`http://localhost:${PORT}`].includes(req.headers.origin))){json(res,403,{error:'Refresh the local app before changing data'});return;}
+  if(req.method!=='GET'&&(req.headers['x-lab-token']!==CSRF||req.headers.origin&&!ALLOWED_ORIGINS.includes(req.headers.origin))){json(res,403,{error:'Refresh the local app before changing data'});return;}
   if(path==='/api/bootstrap'){json(res,200,{token:CSRF,transcriptionProvider,dimensions:Object.fromEntries(Object.entries(dimensions).map(([k,v])=>[k,{title:v.title,criteria:v.question.criteria}])),roles,version:VERSION,connections:Object.fromEntries(Object.entries(keys()).map(([k,v])=>[k,{configured:Boolean(v),verified:verified[k]||false}])),runs:[...pipeline.jobs.values()].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(summary)});return;}
   if(path==='/api/connections'&&req.method==='POST'){const data=await body(req);for(const name of ['apify','groq','fireworks','jev'])if(typeof data[name]==='string'&&data[name].trim()){sessionKeys[name]=data[name].trim();verified[name]=false;}json(res,200,{saved:true});return;}
   if(path==='/api/connections/check'&&req.method==='POST'){const results=Object.fromEntries(await Promise.all(Object.entries(keys()).map(async([name,key])=>[name,await checkProvider(name,key)])));for(const [name,r]of Object.entries(results))verified[name]=r.verified;json(res,200,results);return;}
